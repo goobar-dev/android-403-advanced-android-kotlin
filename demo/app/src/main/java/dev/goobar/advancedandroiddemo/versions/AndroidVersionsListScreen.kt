@@ -4,8 +4,6 @@ package dev.goobar.advancedandroiddemo.versions
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
@@ -37,7 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,7 +47,6 @@ import dev.goobar.advancedandroiddemo.R
 import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
 import dev.goobar.advancedandroiddemo.data.AndroidVersionsRepository
 import dev.goobar.advancedandroiddemo.ui.theme.AdvancedAndroidDemoTheme
-import dev.goobar.advancedandroiddemo.ui.theme.custom.CustomButton
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.immutableListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -70,15 +66,6 @@ internal fun AndroidVersionsListScreen(
                 actions = {
                     IconButton(onClick = viewModel::onSortClicked) {
                         Icon(painter = painterResource(id = R.drawable.ic_sort), contentDescription = "Sort")
-                    }
-
-                    val context = LocalContext.current
-                    CustomButton(
-                        onClick = {
-                            Toast.makeText(context, "Clicked Custom!!", Toast.LENGTH_SHORT).show()
-                        }
-                    ) {
-                        Text("Our Custom Button")
                     }
                 }
             )
