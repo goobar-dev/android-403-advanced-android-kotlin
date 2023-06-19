@@ -1,4 +1,4 @@
-package dev.goobar.advancedandroiddemo
+package dev.goobar.advancedandroiddemo.data
 
 import android.os.Parcelable
 import androidx.versionedparcelable.VersionedParcelable
@@ -12,4 +12,4 @@ data class AndroidVersionInfo(
     val publicName: String,
     val codename: String,
     val details: String
-): VersionedParcelable, Parcelable
+) : VersionedParcelable, Parcelable
