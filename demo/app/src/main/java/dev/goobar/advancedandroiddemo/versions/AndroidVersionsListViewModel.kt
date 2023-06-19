@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
 import dev.goobar.advancedandroiddemo.data.AndroidVersionsRepository
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,11 +57,11 @@ class AndroidVersionsListViewModel : ViewModel() {
                             description = info.details,
                             info = info
                         )
-                    }
+                    }.toImmutableList()
                 )
             )
         }
-    }.stateIn(viewModelScope + Dispatchers.Main.immediate, SharingStarted.WhileSubscribed(3_000), State(emptyList()))
+    }.stateIn(viewModelScope + Dispatchers.Main.immediate, SharingStarted.WhileSubscribed(3_000), State(persistentListOf()))
 
     fun onSortClicked() {
         _sort.update { currentSort ->
@@ -69,7 +72,7 @@ class AndroidVersionsListViewModel : ViewModel() {
         }
     }
 
-    data class State(val versionsList: List<AndroidVersionViewItem>) {
+    data class State(val versionsList: ImmutableList<AndroidVersionViewItem>) {
         data class AndroidVersionViewItem(
             val title: String,
             val subtitle: String,
