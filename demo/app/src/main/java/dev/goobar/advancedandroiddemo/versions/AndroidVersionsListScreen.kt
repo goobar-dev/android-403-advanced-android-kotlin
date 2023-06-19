@@ -47,7 +47,16 @@ internal fun AndroidVersionsListScreen(
     val versionsListState by viewModel.state.collectAsState()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Hello Advanced Android") }) }
+        topBar = {
+            TopAppBar(
+                title = { Text("Hello Advanced Android") },
+                actions = {
+                    IconButton(onClick = viewModel::onSortClicked) {
+                        Icon(painter = painterResource(id = R.drawable.ic_sort), contentDescription = "Sort")
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             LazyColumn(
