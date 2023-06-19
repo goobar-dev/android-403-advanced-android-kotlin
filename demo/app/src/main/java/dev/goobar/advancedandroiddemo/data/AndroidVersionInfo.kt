@@ -3,8 +3,11 @@ package dev.goobar.advancedandroiddemo.data
 import android.os.Parcelable
 import androidx.versionedparcelable.VersionedParcelable
 import androidx.versionedparcelable.VersionedParcelize
+import dev.goobar.advancedandroiddemo.home.NavigationArgs
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
 @VersionedParcelize
 data class AndroidVersionInfo(
@@ -12,4 +15,4 @@ data class AndroidVersionInfo(
     val publicName: String,
     val codename: String,
     val details: String
-) : VersionedParcelable, Parcelable
+) : VersionedParcelable, Parcelable, NavigationArgs

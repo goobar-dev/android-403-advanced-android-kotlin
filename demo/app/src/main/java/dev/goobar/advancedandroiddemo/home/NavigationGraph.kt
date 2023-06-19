@@ -1,11 +1,9 @@
 package dev.goobar.advancedandroiddemo.home
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import dev.goobar.advancedandroiddemo.details.AndroidVersionDetailsScreen
 import dev.goobar.advancedandroiddemo.versions.AndroidVersionsListScreen
 
@@ -13,18 +11,15 @@ import dev.goobar.advancedandroiddemo.versions.AndroidVersionsListScreen
 internal fun DemoNavigationGraph() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "versionsList") {
-        composable("versionsList") {
+    NavHost(navController = navController, startDestination = DemoNavigationDestinations.VersionsList.route) {
+        composable(DemoNavigationDestinations.VersionsList.route) {
             AndroidVersionsListScreen { info ->
-                navController.navigate("versionDetails/${info.apiVersion}")
+                navController.navigate(DemoNavigationDestinations.VersionDetails.createRouteWithArgs(info))
             }
         }
-        composable(
-            route = "versionDetails/{apiVersion}",
-            arguments = listOf(navArgument("apiVersion") { type = NavType.IntType })
-        ) { entry ->
-            val apiVersion = entry.arguments?.getInt("apiVersion") ?: throw IllegalStateException("missing apiVersion")
-            AndroidVersionDetailsScreen(apiVersion) {
+        composable(route = DemoNavigationDestinations.VersionDetails.route) { entry ->
+            val info = DemoNavigationDestinations.VersionDetails.retrieveArgs(entry.arguments)
+            AndroidVersionDetailsScreen(info) {
                 navController.popBackStack()
             }
         }
