@@ -85,7 +85,6 @@ private fun AndroidVersionsList(
     ) {
         itemsIndexed(
             items = viewItems,
-            key = { index, viewItem -> "$index ${viewItem.info.apiVersion}" }
         ) { index, viewItem ->
             AndroidVersionInfoCard(viewItem, onClick)
         }
