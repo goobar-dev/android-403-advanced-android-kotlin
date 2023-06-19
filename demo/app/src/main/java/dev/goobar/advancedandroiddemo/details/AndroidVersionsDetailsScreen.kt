@@ -14,22 +14,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.goobar.advancedandroiddemo.R
-import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
 
 @Composable
-internal fun AndroidVersionDetailsScreen(info: AndroidVersionInfo, onBack: () -> Unit) {
+internal fun AndroidVersionDetailsScreen(
+    viewModel: AndroidVersionDetailsViewModel,
+    onBack: () -> Unit
+) {
+    val state: AndroidVersionDetailsViewModel.State by viewModel.state.collectAsState()
 
     BackHandler(enabled = true, onBack = onBack)
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = info.publicName, modifier = Modifier.padding(start = 20.dp)) },
+                title = { Text(text = state.title, modifier = Modifier.padding(start = 20.dp)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -44,14 +49,14 @@ internal fun AndroidVersionDetailsScreen(info: AndroidVersionInfo, onBack: () ->
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text(text = info.publicName, style = MaterialTheme.typography.displayMedium)
+                Text(text = state.title, style = MaterialTheme.typography.displayMedium)
                 Text(
-                    text = "${info.codename} - API ${info.apiVersion}",
+                    text = state.subtitle,
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     modifier = Modifier.padding(top = 20.dp),
-                    text = info.details,
+                    text = state.description,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
