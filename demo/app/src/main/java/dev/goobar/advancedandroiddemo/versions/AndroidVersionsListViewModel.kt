@@ -26,42 +26,20 @@ class AndroidVersionsListViewModel : ViewModel() {
     private val _sort: MutableStateFlow<Sort> = MutableStateFlow(Sort.ASCENDING)
     private val _versions: MutableStateFlow<List<AndroidVersionInfo>> = MutableStateFlow(AndroidVersionsRepository.data)
 
-//    val state = combine(_sort, _versions) { sort, versions ->
-//        val sortedItems = when (sort) {
-//            Sort.ASCENDING -> versions.sortedBy { it.apiVersion }
-//            Sort.DESCENDING -> versions.sortedByDescending { it.apiVersion }
-//        }.map { info ->
-//            State.AndroidVersionViewItem(
-//                title = info.publicName,
-//                subtitle = "${info.codename} - API ${info.apiVersion}",
-//                description = info.details,
-//                info = info
-//            )
-//        }
-//        State(sortedItems)
-//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(3_000), State(emptyList()))
-
-    val state = flow {
-        val items = AndroidVersionsRepository.data
-        val itemsToReturn = mutableListOf<AndroidVersionInfo>()
-
-        items.forEach { info ->
-            delay(4000)
-            itemsToReturn.add(info)
-            emit(
-                State(
-                    itemsToReturn.map { info ->
-                        State.AndroidVersionViewItem(
-                            title = info.publicName,
-                            subtitle = "${info.codename} - API ${info.apiVersion}",
-                            description = info.details,
-                            info = info
-                        )
-                    }.toImmutableList()
-                )
+    val state = combine(_sort, _versions) { sort, versions ->
+        val sortedItems = when (sort) {
+            Sort.ASCENDING -> versions.sortedBy { it.apiVersion }
+            Sort.DESCENDING -> versions.sortedByDescending { it.apiVersion }
+        }.map { info ->
+            State.AndroidVersionViewItem(
+                title = info.publicName,
+                subtitle = "${info.codename} - API ${info.apiVersion}",
+                description = info.details,
+                info = info
             )
         }
-    }.stateIn(viewModelScope + Dispatchers.Main.immediate, SharingStarted.WhileSubscribed(3_000), State(persistentListOf()))
+        State(sortedItems.toImmutableList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(3_000), State(persistentListOf()))
 
     fun onSortClicked() {
         _sort.update { currentSort ->
