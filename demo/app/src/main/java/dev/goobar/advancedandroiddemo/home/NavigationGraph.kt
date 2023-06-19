@@ -11,6 +11,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dev.goobar.advancedandroiddemo.details.AndroidVersionDetailsScreen
+import dev.goobar.advancedandroiddemo.details.AndroidVersionDetailsViewModel
 import dev.goobar.advancedandroiddemo.versions.AndroidVersionsListScreen
 
 @Composable
@@ -46,7 +47,7 @@ internal fun DemoNavigationGraph() {
             },
         ) { entry ->
             val info = DemoNavigationDestinations.VersionDetails.retrieveArgs(entry.arguments)
-            AndroidVersionDetailsScreen(info) {
+            AndroidVersionDetailsScreen(AndroidVersionDetailsViewModel(info)) {
                 navController.popBackStack()
             }
         }
