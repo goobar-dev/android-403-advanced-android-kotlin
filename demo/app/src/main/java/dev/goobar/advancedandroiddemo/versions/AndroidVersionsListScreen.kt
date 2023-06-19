@@ -2,6 +2,8 @@
 
 package dev.goobar.advancedandroiddemo.versions
 
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.AnimatedVisibility
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
@@ -36,9 +38,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import dev.goobar.advancedandroiddemo.R
 import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
+import dev.goobar.advancedandroiddemo.data.AndroidVersionsRepository
+import dev.goobar.advancedandroiddemo.ui.theme.AdvancedAndroidDemoTheme
 
 @Composable
 internal fun AndroidVersionsListScreen(
@@ -60,18 +68,26 @@ internal fun AndroidVersionsListScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            LazyColumn(
-                contentPadding = PaddingValues(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.testTag("Versions List")
-            ) {
-                itemsIndexed(
-                    items = versionsListState.versionsList,
-                    key = { index, viewItem -> "$index ${viewItem.info.apiVersion}" }
-                ) { index, viewItem ->
-                    AndroidVersionInfoCard(viewItem, onClick)
-                }
-            }
+            AndroidVersionsList(viewItems = versionsListState.versionsList, onClick)
+        }
+    }
+}
+
+@Composable
+private fun AndroidVersionsList(
+    viewItems: List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>,
+    onClick: (AndroidVersionInfo) -> Unit
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.testTag("Versions List")
+    ) {
+        itemsIndexed(
+            items = viewItems,
+            key = { index, viewItem -> "$index ${viewItem.info.apiVersion}" }
+        ) { index, viewItem ->
+            AndroidVersionInfoCard(viewItem, onClick)
         }
     }
 }
@@ -126,4 +142,61 @@ private fun AndroidVersionInfoCard(
             }
         }
     }
+}
+
+@Preview(group = "Phone", fontScale = 1f, uiMode = UI_MODE_NIGHT_YES, device = Devices.NEXUS_5)
+@Preview(group = "Phone", fontScale = 1.5f, uiMode = UI_MODE_NIGHT_YES, device = Devices.NEXUS_5)
+@Preview(group = "Phone", fontScale = 1.25f, uiMode = UI_MODE_NIGHT_NO, device = Devices.NEXUS_5)
+@Preview(group = "Phone", fontScale = 1f, uiMode = UI_MODE_NIGHT_YES, device = Devices.PIXEL_4)
+@Preview(group = "Phone", fontScale = 1.5f, uiMode = UI_MODE_NIGHT_YES, device = Devices.PIXEL_4)
+@Preview(group = "Phone", fontScale = 1.25f, uiMode = UI_MODE_NIGHT_NO, device = Devices.PIXEL_4)
+@Preview(group = "Tablet", fontScale = 1f, uiMode = UI_MODE_NIGHT_YES, device = Devices.NEXUS_10)
+@Preview(group = "Tablet", fontScale = 1.5f, uiMode = UI_MODE_NIGHT_YES, device = Devices.NEXUS_10)
+@Preview(group = "Tablet", fontScale = 1.25f, uiMode = UI_MODE_NIGHT_NO, device = Devices.NEXUS_10)
+@Preview(group = "Tablet", fontScale = 1f, uiMode = UI_MODE_NIGHT_YES, device = Devices.PIXEL_C)
+@Preview(group = "Tablet", fontScale = 1.5f, uiMode = UI_MODE_NIGHT_YES, device = Devices.PIXEL_C)
+@Preview(group = "Tablet", fontScale = 1.25f, uiMode = UI_MODE_NIGHT_NO, device = Devices.PIXEL_C)
+annotation class StandardPreviews
+
+@StandardPreviews
+@Composable
+internal fun PreviewAndroidVersionsListScreen() {
+    AdvancedAndroidDemoTheme() {
+        AndroidVersionsListScreen(onClick = {})
+    }
+}
+
+@Preview
+@Composable
+internal fun PreviewAndroidVersionsList(
+    @PreviewParameter(AndroidVersionsListPreviewParameterProvider::class)
+    items: List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>
+) {
+    AdvancedAndroidDemoTheme() {
+        AndroidVersionsList(viewItems = items, onClick = {})
+    }
+}
+
+private class AndroidVersionsListPreviewParameterProvider
+    : PreviewParameterProvider<List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>> {
+    override val values: Sequence<List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>>
+        get() = sequenceOf(
+            emptyList(),
+            AndroidVersionsRepository.data.map { info ->
+                AndroidVersionsListViewModel.State.AndroidVersionViewItem(
+                    title = info.publicName,
+                    subtitle = "${info.codename} - API ${info.apiVersion}",
+                    description = info.details,
+                    info = info
+                )
+            },
+            AndroidVersionsRepository.data.map { info ->
+                AndroidVersionsListViewModel.State.AndroidVersionViewItem(
+                    title = info.publicName,
+                    subtitle = "${info.codename} - API ${info.apiVersion}",
+                    description = info.details,
+                    info = info
+                )
+            }.take(2)
+        )
 }
