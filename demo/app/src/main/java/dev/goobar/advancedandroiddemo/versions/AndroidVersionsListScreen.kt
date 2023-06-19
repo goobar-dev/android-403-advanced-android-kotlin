@@ -3,6 +3,7 @@
 package dev.goobar.advancedandroiddemo.versions
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,10 +37,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.goobar.advancedandroiddemo.R
 import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
-import dev.goobar.advancedandroiddemo.data.AndroidVersionsRepository
 
 @Composable
-internal fun AndroidVersionsListScreen(onClick: (AndroidVersionInfo) -> Unit) {
+internal fun AndroidVersionsListScreen(
+    viewModel: AndroidVersionsListViewModel = viewModel(),
+    onClick: (AndroidVersionInfo) -> Unit
+) {
+    val versionsListState by viewModel.versionsListState
+
     Scaffold(
         topBar = { TopAppBar(title = { Text("Hello Advanced Android") }) }
     ) { paddingValues ->
@@ -49,7 +54,7 @@ internal fun AndroidVersionsListScreen(onClick: (AndroidVersionInfo) -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(
-                    items = AndroidVersionsRepository.data,
+                    items = versionsListState,
                     key = { info -> info.apiVersion }) { info ->
                     AndroidVersionInfoCard(info, onClick)
                 }
