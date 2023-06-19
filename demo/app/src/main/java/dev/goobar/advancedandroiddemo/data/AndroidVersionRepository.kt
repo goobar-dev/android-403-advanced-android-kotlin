@@ -1,4 +1,4 @@
-package dev.goobar.advancedandroiddemo
+package dev.goobar.advancedandroiddemo.data
 
 object AndroidVersionsRepository {
 
