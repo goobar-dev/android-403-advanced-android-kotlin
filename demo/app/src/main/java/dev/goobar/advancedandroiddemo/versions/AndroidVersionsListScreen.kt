@@ -4,6 +4,7 @@ package dev.goobar.advancedandroiddemo.versions
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.Image
@@ -47,13 +48,17 @@ import dev.goobar.advancedandroiddemo.R
 import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
 import dev.goobar.advancedandroiddemo.data.AndroidVersionsRepository
 import dev.goobar.advancedandroiddemo.ui.theme.AdvancedAndroidDemoTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.immutableListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun AndroidVersionsListScreen(
     viewModel: AndroidVersionsListViewModel = viewModel(),
     onClick: (AndroidVersionInfo) -> Unit
 ) {
-    val versionsListState by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsState()
+    val listState = state.versionsList
 
     Scaffold(
         topBar = {
@@ -68,14 +73,14 @@ internal fun AndroidVersionsListScreen(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            AndroidVersionsList(viewItems = versionsListState.versionsList, onClick)
+            AndroidVersionsList(viewItems = listState, onClick)
         }
     }
 }
 
 @Composable
 private fun AndroidVersionsList(
-    viewItems: List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>,
+    viewItems: ImmutableList<AndroidVersionsListViewModel.State.AndroidVersionViewItem>,
     onClick: (AndroidVersionInfo) -> Unit
 ) {
     LazyColumn(
@@ -85,6 +90,7 @@ private fun AndroidVersionsList(
     ) {
         itemsIndexed(
             items = viewItems,
+            key = { index, viewItem -> "$index ${viewItem.info.apiVersion}" }
         ) { index, viewItem ->
             AndroidVersionInfoCard(viewItem, onClick)
         }
@@ -169,7 +175,7 @@ internal fun PreviewAndroidVersionsListScreen() {
 @Composable
 internal fun PreviewAndroidVersionsList(
     @PreviewParameter(AndroidVersionsListPreviewParameterProvider::class)
-    items: List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>
+    items: ImmutableList<AndroidVersionsListViewModel.State.AndroidVersionViewItem>
 ) {
     AdvancedAndroidDemoTheme() {
         AndroidVersionsList(viewItems = items, onClick = {})
@@ -178,9 +184,9 @@ internal fun PreviewAndroidVersionsList(
 
 private class AndroidVersionsListPreviewParameterProvider
     : PreviewParameterProvider<List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>> {
-    override val values: Sequence<List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>>
+    override val values: Sequence<ImmutableList<AndroidVersionsListViewModel.State.AndroidVersionViewItem>>
         get() = sequenceOf(
-            emptyList(),
+            immutableListOf(),
             AndroidVersionsRepository.data.map { info ->
                 AndroidVersionsListViewModel.State.AndroidVersionViewItem(
                     title = info.publicName,
@@ -188,7 +194,7 @@ private class AndroidVersionsListPreviewParameterProvider
                     description = info.details,
                     info = info
                 )
-            },
+            }.toImmutableList(),
             AndroidVersionsRepository.data.map { info ->
                 AndroidVersionsListViewModel.State.AndroidVersionViewItem(
                     title = info.publicName,
@@ -196,6 +202,6 @@ private class AndroidVersionsListPreviewParameterProvider
                     description = info.details,
                     info = info
                 )
-            }.take(2)
+            }.take(2).toImmutableList()
         )
 }
