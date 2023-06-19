@@ -5,4 +5,5 @@ import dev.goobar.advancedandroiddemo.data.AndroidVersionInfo
 object DemoNavigationDestinations {
     object VersionsList : NavigationDestination
     object VersionDetails : ArgumentDestination<AndroidVersionInfo>
+    object Topics : NavigationDestination
 }
