@@ -26,42 +26,101 @@ Make sure the demo project can be built and deployed
 - Update the declaration of `selectedItem` to use `rememberSaveable{}` to preserve state across configuration change
 
 ## Lesson 4 - Navigation
-
-### Part 1
 - Start by reviewing the starter code
-    - Examine the use of `AnimatedVisibility()` in `AndroidVersionsListScreen`
+
+Set up a basic navigation graph:
 - Create a new file `DemoNavigationGraph` and create a composable `DemoNavigationGraph`
 - Create a remembered `NavController` by calling `rememberNavController()`
-- Set up a `NavHost` with 2 composable destinations
-    - One route named `"versionsList"`
-    - One route named `"versionDetails/{apiVersion}"`
-    - The `versionDetails` route should configure the `apiVersion` argument to be of type `Int`
+- Setup a `NavHost` with 2 composable destinations
+  - One route named `"versionsList"`
+  - One route named `"versionDetails/{apiVersion}"`
+  - The `versionDetails` route should configure the `apiVersion` argument to be of type `Int`
 - Update the `AndroidVersionListScreen` click handler to navigate to the details screen using the `NavController`
 - Parse the `apiVersion` nav argument from the `versionDetails` backstack entry and pass to the composable
 - Update the `AndroidVersionDetailsScreen` back click handler to pop the `NavController` backstack
 - Update `MainActivity` to call `DemoNavigationGraph` instead of `MainActivityContent`
 - Remove `HomeScreen.kt` and update `AndroidVersionListScreen` and `AndroidVersionDetailsScreen` to include their own `Scaffold`
 
-### Part 2
-- Add the kotlinx serialization plugin, and `kotlinx-serialization-json` dependency to `app/build.gradle`
-- Add the `@Serializable` annotation to `AndroidVersionInfo`
-- Create a new file in the `home` package named `NavigationDestination.kt`
-- Add interfaces for strongly-typed navigation
-    - `NavigationArgs`
-    - `NavigationDestination`
-        - Add `name: String` property
-        - Add `route: String` property
-    - `ArgumentDesintation<T: NavigationArgs> : NavigationDestination`
-- Make `AndroidVersionInfo` implement `NavigationArgs`
-- Add extension function for creating an encoded route from a `NavigationArgs`
-- Add extension function for retrieving a `NavigationArgs` from a `Bundle`
-- Update `AndroidVersionDetailsScreen` to take `AndroidVersionInfo` rather than `Int`
-- Update `DemoNavigationGraph` to use the strongly-typed extension functions for navigation
+Refactor the navigation graph configuration to use a custom type-safe routing implementation:
+- Add `kotlinx.serialization` to the project and add `@Serializable` annotation to `AndroidVersionInfo`
+- Create a file named `NavigationDestination.kt`
+- Create a `NavigationArgs` interface to apply to classes that will be passed along with navigation routes
+- Create a `NavigationDestination` interface with `name` and `route` properties
+- Create an `ArgumentDestination` interface extending `NavigationDestination`
+- Create extension methods on `ArgumentDestination` named `createRouteWithArgs()` and `retrieveArgs()`
+- Define object classes to represent our `VersionsList` and `VersionDetails` destinations
+- Refactor `DemoNavigationGraph` to use these new type-safe destinations
 
-### Part 3
-- Add `accompanist-navigation-animation` dependency to `app/build.gradle`
-- Update `DemoNavigationGraph` to support animation
-    - Replace `rememberNavController()` with `rememberAnimatedNavController()`
-    - Replace `NavHost()` with `AnimatedNavHost()`
-    - Replace `composable()` with accompanist version
-    - Set `enterTransition` and `exitTransition` values for the navigation to/from version details screen
+Refactor the navigation graph implementation to use the animated navigation apis from the Accompanist libraries.
+- Add the latest stable `com.google.accompanist:accompanist-navigation-animation` version to the project's `app/build.gradle` file
+- Replace `rememberNavController()` and `NavHost` with `rememberAnimatedNavController()` and `AnimatedNavHost()`
+- Configure `enterTransition` and `exitTransition` for the version details route
+- Use `AnimatedContentScope.SlideDirection.Left` for the enter `towards` value and `AnimatedContentScope.SlideDirection.Right` for the exit animation
+- Customize the `animationSpec` using the `tween()` function
+
+## Lesson 5 - MVVM & Compose
+Start by populating versions list state using basic ViewModel:
+- Create an `AndroidVersionsListViewModel`
+- Add a single property `versionsListState: MutableState<List<AndroidVersionInfo>>` and initialize to pull data from `AndroidVersionsRepository`
+- Update `AndroidVersionsListScreen` take an instance of `AndroidVersionsListViewModel` as a parameter using the `viewModel()` function to create a new instance by default
+- At the beginning of `AndroidVersionListScreen`, initialize a variable `versionsListState` to track the ViewModel property using the mutable state delegate
+- Use that state variable, rather than the repository, to populate the `LazyColumn`
+
+Refactor to use `StateFlow` to pass view state to Composables:
+- Within `AndroidVersionsListViewModel` create a `State` data class that holds a `List<AndroidVersionViewItem>`
+    - Within `State` create a child class named `AndroidVersionViewItem` to hold all data needed to represent a version on the screen
+- Create an `AndroidVersionDetailsViewModel`
+- Within `AndroidVersionDetailsViewModel` create a `State` data class that holds the display details
+- Add a `StateFlow` to `AndroidVersionsListViewModel` to expose an instance of `State`
+- Add a `StateFlow` to `AndroidVersionDetailsViewModel` to expose an instance of `State`
+- Update `AndoridVersionsDetailsScreen` to take a `AndroidVersionDetailsViewModel` as a parameter
+- At the beginning of `AndoridVersionsDetailsScreen`, initialize a variable `state` to track the ViewModel property using the `collectAsState()` function
+- Update `AndoridVersionsDetailsScreen` to pull data from the tracked state variable
+
+Implement a sort feature:
+- Add an enum named `Sort` with values `ASCENDING` and `DESCENDING`
+- `AndroidVersionsListViewModel` should maintain an internal `MutableStateFlow` named `_sort` that tracks the current `Sort` value
+- `AndroidVersionsListViewModel` should maintain an internal `MutableStateFlow` named `_versions` that emits the list of verions from `AndroidVersionsRepository`
+- The value of `state` should be derived by combining the emissions from `_sort` and `_versions`
+- When a value from either flow changes, calculate the output state by sorting the versions list, and mapping to instances of `State.AndroidVerionViewItem`
+- Use the `stateIn()` function to convert the combined flows into a `StateFlow`
+- Add a "sort" button to `AndroidVersionsListScreen`
+- Add a function on `AndroidVersionsListViewModel` named `onSortClicked()` to respond to clicking the sort button
+
+## Lesson 6 - Testing Composables
+- Create a new test class `AndroidVersionsListTest` in the `androidTest` source set
+- Add a new test rule using `createComposeRule()`
+- Create new test method named `versionsListDisplayedOnHomeScreenLoad()`
+  - Validate that a composable with `testTag = "Versions List"` exists in the tree
+- Create new test method named `versionsListDisplaysFirstVersionInfo()`
+  - Validate that the first item in the list matches what is expected from the repository
+- Create a new test method named `printTreeToLog()`
+  - Use the `printToLog()` method to view the semantics tree
+- Create a new test method named `versionInfoClickHandlerCalledWhenCardIsClicked()`
+  - Validate that clicks on a list item are propagated to the click handler
+
+## Lesson 7 - Improving Compose Experience
+- Refactor `AndroidVersionsListScreen` to include a `AndroidVersionsList` composable that takes a `List<AndroidVersionsListViewModel.State.AndroidVersionViewItem>`
+- Write a preview composable for `AndroidVersionsListScreen`
+- Write a preview composable for `PreviewAndroidVersionsList` that uses a `PreviewParameterProvider` to generate previews for different sets of data
+- Create a multi-preview annotation and apply it to `PreviewAndroidVersionsListScreen()` to generate a multitude of previews across different device configurations
+
+## Lesson 8 - Compose Performance
+Examine recomposition counts:
+- Use Android Studio's Layout Inspector to examine recomposition counts for the app
+- Modify app to simulate a "heartbeat" the generates more frequent recompositions
+
+Analyze recomposition:
+- Integrate Compose Compiler metrics
+- Generate a Compose Compiler metrics report
+- Examine the report to understand what could be causing recompositions
+- Update the `State` classes and `AndroidVersionsListScreen` composables to be stable and skippable
+- Create a variable `val listState = state.versionList` in `AndroidVersionsListScreen` and observe the impact on recomposition
+
+## Lesson 9 - Custom Design System
+- Create a new `ui.theme.custom` package
+- Create a new class `CustomColorScheme` and a function `defaultCustomColorScheme()` to create a default instance
+    - `CustomColorScheme` should be a data class with one property `val primary: Color`
+- Create a new `CustomTheme` object class that has a single `@ReadOnlyComposable` property `val colorScheme: CustomColorScheme`
+- Create a `CustomButton` composable that uses a `Box()` to build up a very simply custom button that pulls colors from `CustomTheme`
+- Add a usage of `CustomButton` somewhere in the app to demonstrate its usage
