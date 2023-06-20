@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Planet(
     val name: String,
-    val rotationPeriod: Int,
-    val orbitalPeriod: Int,
-    val diameter: Int,
-    val climate: String,
-    val gravity: String,
-    val population: String,
-    val url: String
+    val rotationPeriod: Int = 0,
+    val orbitalPeriod: Int = 0,
+    val diameter: Int = 0,
+    val climate: String = "",
+    val gravity: String = "",
+    val population: String = "",
+    val url: String = ""
 ) : NavigationArgs
 
 fun PlanetDTO.toPlanet() = Planet(
