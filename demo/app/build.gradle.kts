@@ -4,6 +4,7 @@ plugins {
     id("kotlin-parcelize")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.20"
     id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
@@ -49,6 +50,10 @@ android {
     }
 }
 
+ksp {
+    arg(RoomSchemaArgProvider(File(projectDir, "schemas")))
+}
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.10.1")
@@ -63,6 +68,11 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.6.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
     implementation("com.google.accompanist:accompanist-placeholder-material:0.28.0")
+
+    implementation("androidx.room:room-runtime:2.4.2")
+    ksp("androidx.room:room-compiler:2.4.2")
+    implementation("androidx.room:room-ktx:2.4.2")
+    implementation("net.zetetic:android-database-sqlcipher:4.5.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
@@ -84,4 +94,15 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2022.10.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+}
+
+class RoomSchemaArgProvider(
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val schemaDir: File
+) : CommandLineArgumentProvider {
+
+    override fun asArguments(): Iterable<String> {
+        return listOf("room.schemaLocation=${schemaDir.path}")
+    }
 }

@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
     private val navigationItems = mapOf(
         DemoNavigationDestinations.VersionsList to BottomNavItem("Versions", R.drawable.ic_info, DemoNavigationDestinations.VersionsList),
         DemoNavigationDestinations.Topics to BottomNavItem("Topics", R.drawable.ic_lightbulb, DemoNavigationDestinations.Topics),
+        DemoNavigationDestinations.Notes to BottomNavItem("Notes", R.drawable.ic_notes, DemoNavigationDestinations.Notes),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
