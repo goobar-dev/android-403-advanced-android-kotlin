@@ -184,3 +184,20 @@ Encrypt a local Room database:
 - Inject a `HiltWorkerFactory` into `DemoApplication`
 - Override `getWorkManagerConfiguration()` in `DemoApplication` to configure a worker factory using the injected `HiltWorkFactory`
 - Override `onCreat()` in `DemoApplication` to define a `OneTimeWorkRequest` to run `FeaturedReposSyncWorker`
+
+## Lesson 14 - Integrating Crashlytics
+- Create a new Firebase project
+- Register a new app with Crashlytics
+- Download the `google-services.json` file and copy into root app directory
+- Add the Firebase SDK to the project
+- Initialize Firebase inside of `DemoApplication.onCreate()`
+- Force a crash to see the report show up in Firebase
+
+## Lesson 15 - Logging with Firebase Analytics
+- Create a new `analytics` package
+- Create a `Logger` interface
+- Add the Firebase Analytics sdk to `app/build.gradle.kts`
+- Create a class `FirebaseAnalyticsLogger` that implements `Logger` and logs to Firebase Analytics\
+- Add a class `AnalyticsModule` in the `di` package that can provider an instance of `FirebaseAnalyticsLogger` whenever a class needs injected with `Logger`
+- Log a `Note Saved` event in `AddNoteViewModel`
+- Log a `Topic Clicked` event in `AndroidTopicsViewModel`
