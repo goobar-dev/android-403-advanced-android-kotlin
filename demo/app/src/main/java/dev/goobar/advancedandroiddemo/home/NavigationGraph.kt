@@ -7,16 +7,15 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dev.goobar.advancedandroiddemo.addnote.AddNoteScreen
 import dev.goobar.advancedandroiddemo.details.AndroidVersionDetailsScreen
 import dev.goobar.advancedandroiddemo.details.AndroidVersionDetailsViewModel
 import dev.goobar.advancedandroiddemo.notes.NotesScreen
 import dev.goobar.advancedandroiddemo.topics.AndroidTopicsScreen
+import dev.goobar.advancedandroiddemo.trending.TrendingReposScreen
 import dev.goobar.advancedandroiddemo.versions.AndroidVersionsListScreen
 
 @Composable
@@ -51,6 +50,9 @@ internal fun DemoNavigationGraph(navController: NavHostController) {
             AddNoteScreen(
                 onBackClick = { navController.popBackStack() },
             )
+        }
+        composable(route = DemoNavigationDestinations.TrendingRepos.route) {
+            TrendingReposScreen(onBackClick = { navController.popBackStack() })
         }
         composable(
             route = DemoNavigationDestinations.VersionDetails.route,

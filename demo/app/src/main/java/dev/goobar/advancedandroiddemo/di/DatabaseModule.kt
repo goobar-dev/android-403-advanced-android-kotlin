@@ -11,6 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.goobar.advancedandroiddemo.BuildConfig
 import dev.goobar.advancedandroiddemo.db.AppDatabase
 import dev.goobar.advancedandroiddemo.db.NoteDao
+import dev.goobar.advancedandroiddemo.db.RepoDao
 import net.sqlcipher.database.SupportFactory
 import javax.inject.Singleton
 
@@ -20,6 +21,11 @@ class DatabaseModule {
     @Provides
     fun provideNoteDao(appDatabase: AppDatabase): NoteDao {
         return appDatabase.noteDao()
+    }
+
+    @Provides
+    fun provideRepoDao(appDatabase: AppDatabase): RepoDao {
+        return appDatabase.repoDao()
     }
 
     @Provides
