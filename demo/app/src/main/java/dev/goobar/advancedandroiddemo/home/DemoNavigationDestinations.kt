@@ -8,4 +8,5 @@ object DemoNavigationDestinations {
     object Topics : NavigationDestination
     object Notes : NavigationDestination
     object AddNote : NavigationDestination
+    object TrendingRepos : NavigationDestination
 }
