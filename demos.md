@@ -124,3 +124,17 @@ Analyze recomposition:
 - Create a new `CustomTheme` object class that has a single `@ReadOnlyComposable` property `val colorScheme: CustomColorScheme`
 - Create a `CustomButton` composable that uses a `Box()` to build up a very simply custom button that pulls colors from `CustomTheme`
 - Add a usage of `CustomButton` somewhere in the app to demonstrate its usage
+
+## Lesson 10 - Network Requests with Suspend Functions
+- Start by examining the updated app structure
+- Explore the Hilt integration
+- Add a `getTopics(): List<Topic>` function to `StudyGuideService`
+- Update `AndroidTopicsViewModel` to expose a `StateFlow<List<TopicViewItem>>`
+- Populate the `StateFlow` by using a flow builder to make a network call to fetch topics using `StudyGuideService`
+- Add sealed class for `Events` within `AndroidTopicsViewModel`.
+    - There should be a single subtype `ShowTopicClickedMessage(val message: String)`
+- Add a method to `AndroidTopicsViewModel` `onTopicClicked(topic: TopicViewItem)` to respond to clicking a topic list item
+    - This method should emit an event via a `SharedFlow` indicating an action to take in response to clicking a list item
+- Update `TopicsScreen` to display the list of `TopicViewItem` from `AndroidTopicsViewModel`
+- Show a `Snackbar` in response to any `Event` emitted by `AndroidTopicsViewModel`
+- Call `AndroidTopicsViewModel.onTopicClicked()` when a list item is clicked
