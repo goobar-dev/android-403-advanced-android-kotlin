@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.goobar.advancedandroiddemo.BuildConfig
+import dev.goobar.advancedandroiddemo.network.GitHubFeaturedReposService
 import dev.goobar.advancedandroiddemo.network.StudyGuideService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
@@ -22,5 +23,17 @@ object NetworkModule {
             .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
             .build()
             .create(StudyGuideService::class.java)
+    }
+
+    @Provides
+    fun provideGitHubFeaturedReposService(): GitHubFeaturedReposService {
+        val json = Json() {
+            ignoreUnknownKeys = true
+        }
+        return Retrofit.Builder()
+            .baseUrl("https://api.github.com/search/")
+            .addConverterFactory(json.asConverterFactory(MediaType.get("application/json")))
+            .build()
+            .create(GitHubFeaturedReposService::class.java)
     }
 }
