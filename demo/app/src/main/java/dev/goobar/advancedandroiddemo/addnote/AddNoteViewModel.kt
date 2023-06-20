@@ -1,6 +1,10 @@
 package dev.goobar.advancedandroiddemo.addnote
 
 import androidx.compose.runtime.*
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,9 +14,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private val LAST_CATEGORY = stringPreferencesKey("last_category")
+
 @HiltViewModel
 class AddNoteViewModel @Inject constructor(
-    private val noteDao: NoteDao
+    private val noteDao: NoteDao,
+    private val settings: DataStore<Preferences>
 ) : ViewModel() {
 
     private val _events: MutableSharedFlow<Event> = MutableSharedFlow()
@@ -23,8 +30,9 @@ class AddNoteViewModel @Inject constructor(
     var content by mutableStateOf("")
         private set
     val categories by mutableStateOf(listOf("Android", "Kotlin", "Software Development", "Cloud"))
-    var selectedCategory by mutableStateOf(categories.first())
-        private set
+    val selectedCategory = settings.data
+        .map { preferences -> preferences[LAST_CATEGORY] ?: "Android" }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "Android")
 
     val showSaveButton: StateFlow<Boolean> =
         snapshotFlow { title }.combine(snapshotFlow { content }) { title, content ->
@@ -35,12 +43,12 @@ class AddNoteViewModel @Inject constructor(
     fun onContentChanged(newContent: String) { content = newContent }
     fun onSaveClicked() {
         viewModelScope.launch {
-            noteDao.save(NoteEntity(title, selectedCategory, content))
+            noteDao.save(NoteEntity(title, selectedCategory.value, content))
             _events.emit(Event.SaveCompleted)
         }
     }
     fun onCategoryClicked(newCategory: String) {
-        viewModelScope.launch { selectedCategory = newCategory }
+        viewModelScope.launch { settings.edit { preferences -> preferences[LAST_CATEGORY] = newCategory } }
     }
 
     sealed class Event {
