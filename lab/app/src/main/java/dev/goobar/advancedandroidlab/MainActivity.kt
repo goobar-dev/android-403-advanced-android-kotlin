@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.goobar.advancedandroidlab.navigation.StarWarsPlanetsNavigationGraph
 import dev.goobar.advancedandroidlab.network.PlanetDTO
 import dev.goobar.advancedandroidlab.network.SWAPINetworkClient
 import dev.goobar.advancedandroidlab.ui.theme.AdvancedAndroidLabTheme
@@ -38,24 +39,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var planets by remember { mutableStateOf<List<PlanetDTO>>(emptyList()) }
-                    LaunchedEffect(this) {
-                        launch(Dispatchers.IO) {
-                            planets = SWAPINetworkClient.getPlanets().results
-                        }
-                    }
-
-                    if (planets.isEmpty()) {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(modifier = Modifier.size(56.dp))
-                        }
-                    } else {
-                        LazyColumn() {
-                            items(planets) { planet ->
-                                Text(planet.name)
-                            }
-                        }
-                    }
+                    StarWarsPlanetsNavigationGraph()
                 }
             }
         }
