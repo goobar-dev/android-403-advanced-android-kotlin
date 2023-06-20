@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.goobar.advancedandroidlab.domain.Planet
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun PlanetsListScreen(
@@ -46,18 +47,23 @@ fun PlanetsListScreen(
             if (state.planets.isEmpty()) {
                 CircularProgressIndicator(modifier = Modifier.size(56.dp))
             } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(20.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("Planets List"),
-                    verticalArrangement = spacedBy(8.dp),
-                ) {
-                    items(state.planets) { planet ->
-                        PlanetListItem(planet = planet, onClick = onClick)
-                    }
-                }
+                PlanetsList(planets = state.planets, onClick = onClick)
             }
+        }
+    }
+}
+
+@Composable
+private fun PlanetsList(planets: ImmutableList<Planet>, onClick: (Planet) -> Unit) {
+    LazyColumn(
+        contentPadding = PaddingValues(20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("Planets List"),
+        verticalArrangement = spacedBy(8.dp),
+    ) {
+        items(planets) { planet ->
+            PlanetListItem(planet = planet, onClick = onClick)
         }
     }
 }
