@@ -138,3 +138,30 @@ Analyze recomposition:
 - Update `TopicsScreen` to display the list of `TopicViewItem` from `AndroidTopicsViewModel`
 - Show a `Snackbar` in response to any `Event` emitted by `AndroidTopicsViewModel`
 - Call `AndroidTopicsViewModel.onTopicClicked()` when a list item is clicked
+
+## Lesson 11 - Local Storage with Room
+Save and retrieve notes from a local database:
+- Start by observing the new Notes flow in the app
+- Update `NoteEntity` to store a `title`, `category` and `content` value with an auto-generated primary key
+- Add a `db` package
+- Create an interface `NoteDao`
+    - Add the `@Dao` annotation
+    - Add a `getAll(): Flow<List<NoteEntity>>` method
+    - Add a `get(noteId: Int): NoteEntity` method
+    - Add a `save(note: NoteEntity)` method
+- Create an abstract class `AppDatabase`
+    - Make the class extend `RoomDatabase`
+    - Add the `@Database` annotation and add `NoteEntity::class` to the `entities` list
+    - Add a `abstract fun noteDao(): NoteDao` method
+- Create a new class `DatabaseModule` in the `di` package
+    - Add a method `provideNoteDao(appDatabase: AppDatabase): NoteDao`
+    - Add a method `provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase`
+- Update `NotesViewModel` to display the notes from the database
+- Update `AddNoteViewModel` to save a new note to the database when the save button is clicked
+
+Encrypt a local Room database:
+- Observe the database using the Database Inspector
+- Add a `DATABASE_PASSWORD` project property to `app/build.gradle.kts`
+- Add a sqlcipher `SupportFactory` variable in `provideAppDatabase()`
+- Call `openHelperFactory(supportFactory)` on the database builder
+- Try observing the local database again
