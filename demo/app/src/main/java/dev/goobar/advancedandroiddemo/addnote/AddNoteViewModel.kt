@@ -4,12 +4,16 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.goobar.advancedandroiddemo.data.NoteEntity
+import dev.goobar.advancedandroiddemo.db.NoteDao
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddNoteViewModel @Inject constructor() : ViewModel() {
+class AddNoteViewModel @Inject constructor(
+    private val noteDao: NoteDao
+) : ViewModel() {
 
     private val _events: MutableSharedFlow<Event> = MutableSharedFlow()
     val events = _events.asSharedFlow()
@@ -31,8 +35,8 @@ class AddNoteViewModel @Inject constructor() : ViewModel() {
     fun onContentChanged(newContent: String) { content = newContent }
     fun onSaveClicked() {
         viewModelScope.launch {
+            noteDao.save(NoteEntity(title, selectedCategory, content))
             _events.emit(Event.SaveCompleted)
-            TODO("Save the note to database")
         }
     }
     fun onCategoryClicked(newCategory: String) {
