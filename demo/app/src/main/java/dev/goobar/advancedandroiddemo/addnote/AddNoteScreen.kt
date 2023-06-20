@@ -37,6 +37,7 @@ fun AddNoteScreen(
 
     val layoutDirection = LocalLayoutDirection.current
     val showSaveButton by viewModel.showSaveButton.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.events.collect {
@@ -89,7 +90,7 @@ fun AddNoteScreen(
                 modifier = Modifier
                     .padding(20.dp)
                     .fillMaxWidth(),
-                viewModel.selectedCategory,
+                selectedCategory,
                 viewModel.categories.toImmutableList(),
                 viewModel::onCategoryClicked
             )
