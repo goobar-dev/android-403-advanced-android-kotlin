@@ -174,3 +174,13 @@ Encrypt a local Room database:
 - In `AddNoteViewModel`, update `selectedCategory` to load from preferences
 - In `AddNoteViewModel`, update `onCategoryClicked()` to save to preferences
 - In `AddNoteScreen` update the `selectedCategory` state to use `collectAsState()`
+
+## Lesson 13 - Background Work with WorkManager
+- Remove default androidx-startup initializer in `AndroidManifest.xml`
+- Create a `sync` package
+- In the `sync` package, create `ReaturedReposSyncWorker` the extends `CoroutineWorker`
+- Override `doWork()` to call `GitHubFeaturedReposService.getFeaturedAndroidRepos()` and save them locally using `RepoDao`
+- Make `DemoApplication` implement `Configuration.Provider`
+- Inject a `HiltWorkerFactory` into `DemoApplication`
+- Override `getWorkManagerConfiguration()` in `DemoApplication` to configure a worker factory using the injected `HiltWorkFactory`
+- Override `onCreat()` in `DemoApplication` to define a `OneTimeWorkRequest` to run `FeaturedReposSyncWorker`
