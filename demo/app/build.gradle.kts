@@ -85,6 +85,8 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     kapt("com.google.dagger:hilt-compiler:2.44")
 
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 

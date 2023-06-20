@@ -37,7 +37,6 @@ fun AddNoteScreen(
 
     val layoutDirection = LocalLayoutDirection.current
     val showSaveButton by viewModel.showSaveButton.collectAsState()
-    val foo by remember { derivedStateOf { showSaveButton == true } }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect {
