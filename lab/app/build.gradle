@@ -60,6 +60,8 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.3.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.0")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+
     testImplementation("junit:junit:4.13.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
