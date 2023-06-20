@@ -6,6 +6,8 @@ plugins {
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 val STUDY_GUIDE_SERVICE_URL: String by project
@@ -86,6 +88,9 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.44")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    implementation(platform("com.google.firebase:firebase-bom:31.1.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
 
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.hilt:hilt-work:1.0.0")
