@@ -165,3 +165,12 @@ Encrypt a local Room database:
 - Add a sqlcipher `SupportFactory` variable in `provideAppDatabase()`
 - Call `openHelperFactory(supportFactory)` on the database builder
 - Try observing the local database again
+
+## Lesson 12 - Local Preferences with DataStore
+- Add a `PreferenceModule` class in the `di` package
+- Add a method `providePreferences(@ApplicationContext context: Context): DataStore<Preferences>`
+- In `AddNoteViewModel` create a top-level property `LAST_CATEGORY` using the `stringPreferenceKey()` function
+- Inject an instance of `DataStore<Preferences>` into `AddNoteViewModel`
+- In `AddNoteViewModel`, update `selectedCategory` to load from preferences
+- In `AddNoteViewModel`, update `onCategoryClicked()` to save to preferences
+- In `AddNoteScreen` update the `selectedCategory` state to use `collectAsState()`
