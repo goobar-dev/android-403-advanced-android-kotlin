@@ -6,4 +6,6 @@ object DemoNavigationDestinations {
     object VersionsList : NavigationDestination
     object VersionDetails : ArgumentDestination<AndroidVersionInfo>
     object Topics : NavigationDestination
+    object Notes : NavigationDestination
+    object AddNote : NavigationDestination
 }
