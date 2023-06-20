@@ -91,6 +91,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:31.1.0"))
     implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.hilt:hilt-work:1.0.0")

@@ -3,6 +3,7 @@ package dev.goobar.advancedandroiddemo.topics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.goobar.advancedandroiddemo.analytics.Logger
 import dev.goobar.advancedandroiddemo.data.Topic
 import dev.goobar.advancedandroiddemo.network.StudyGuideService
 import kotlinx.collections.immutable.ImmutableList
@@ -18,7 +19,10 @@ import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 @HiltViewModel
-class AndroidTopicsViewModel @Inject constructor(private val service: StudyGuideService) : ViewModel() {
+class AndroidTopicsViewModel @Inject constructor(
+    private val logger: Logger,
+    private val service: StudyGuideService
+    ) : ViewModel() {
 
     val topics = flow {
         emit(service.getTopics().map { it.toViewItem() })
@@ -28,6 +32,7 @@ class AndroidTopicsViewModel @Inject constructor(private val service: StudyGuide
     val events = _events.asSharedFlow()
 
     fun onTopicClicked(topic: TopicViewItem) {
+        logger.log("Topic Clicked", mapOf("title" to topic.title))
         viewModelScope.launch(Dispatchers.Main.immediate) { _events.emit(Events.ShowTopicClickedMessage("Clicked ${topic.title}")) }
     }
 
