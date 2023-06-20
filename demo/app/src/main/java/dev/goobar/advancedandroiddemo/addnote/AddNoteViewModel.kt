@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.goobar.advancedandroiddemo.analytics.Logger
 import dev.goobar.advancedandroiddemo.data.NoteEntity
 import dev.goobar.advancedandroiddemo.db.NoteDao
 import kotlinx.coroutines.flow.*
@@ -19,7 +20,8 @@ private val LAST_CATEGORY = stringPreferencesKey("last_category")
 @HiltViewModel
 class AddNoteViewModel @Inject constructor(
     private val noteDao: NoteDao,
-    private val settings: DataStore<Preferences>
+    private val settings: DataStore<Preferences>,
+    private val logger: Logger
 ) : ViewModel() {
 
     private val _events: MutableSharedFlow<Event> = MutableSharedFlow()
@@ -43,6 +45,7 @@ class AddNoteViewModel @Inject constructor(
     fun onContentChanged(newContent: String) { content = newContent }
     fun onSaveClicked() {
         viewModelScope.launch {
+            logger.log("Note Saved", mapOf("title" to title))
             noteDao.save(NoteEntity(title, selectedCategory.value, content))
             _events.emit(Event.SaveCompleted)
         }
