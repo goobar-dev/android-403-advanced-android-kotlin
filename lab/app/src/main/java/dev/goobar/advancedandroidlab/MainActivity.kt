@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package dev.goobar.advancedandroidlab
 
 import android.os.Bundle
@@ -7,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import dagger.hilt.android.AndroidEntryPoint
 import dev.goobar.advancedandroidlab.navigation.StarWarsPlanetsNavigationGraph
 import dev.goobar.advancedandroidlab.ui.theme.AdvancedAndroidLabTheme

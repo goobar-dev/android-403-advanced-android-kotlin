@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 
 package dev.goobar.advancedandroidlab.planetslist
 
+import android.Manifest
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.goobar.advancedandroidlab.domain.Planet
 import kotlinx.collections.immutable.ImmutableList
 
@@ -38,7 +43,22 @@ fun PlanetsListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Star Wars Planets") })
+            TopAppBar(
+                title = { Text("Star Wars Planets") },
+                actions = {
+                    val cameraPermissionState = rememberPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+
+                    if (!cameraPermissionState.status.isGranted) {
+                        Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+                            Text("Allow Notifications")
+                        }
+                    } else {
+                        Text("Daily Planet Active")
+                    }
+                }
+            )
         }
     ) {
         Box(
