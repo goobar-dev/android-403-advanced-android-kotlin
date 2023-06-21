@@ -25,13 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.goobar.advancedandroidlab.domain.Planet
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun PlanetsListScreen(
-    viewModel: PlanetsListViewModel = viewModel(factory = PlanetListViewModelProviderFactory),
+    viewModel: PlanetsListViewModel = hiltViewModel(),
     onClick: (Planet) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
@@ -41,9 +41,11 @@ fun PlanetsListScreen(
             TopAppBar(title = { Text("Star Wars Planets") })
         }
     ) {
-        Box(modifier = Modifier
-            .padding(it)
-            .fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize(), contentAlignment = Alignment.Center
+        ) {
             if (state.planets.isEmpty()) {
                 CircularProgressIndicator(modifier = Modifier.size(56.dp))
             } else {

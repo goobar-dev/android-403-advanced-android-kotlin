@@ -1,5 +1,6 @@
 package dev.goobar.advancedandroidlab.domain
 
+import dev.goobar.advancedandroidlab.db.PlanetEntity
 import dev.goobar.advancedandroidlab.navigation.NavigationArgs
 import dev.goobar.advancedandroidlab.network.PlanetDTO
 import kotlinx.serialization.Serializable
@@ -16,7 +17,7 @@ data class Planet(
     val url: String = ""
 ) : NavigationArgs
 
-fun PlanetDTO.toPlanet() = Planet(
+fun PlanetEntity.toPlanet() = Planet(
     name,
     rotationPeriod,
     orbitalPeriod,
